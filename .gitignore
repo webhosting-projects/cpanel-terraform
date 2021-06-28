@@ -6,3 +6,5 @@
 
 # Crash log files
 crash.log
+
+*.lock.*

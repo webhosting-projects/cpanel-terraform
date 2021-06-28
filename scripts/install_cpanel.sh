@@ -1,3 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
-touch hola.txt
+sudo yum install htop -y
+sudo yum install nginx -y

@@ -1,22 +1,3 @@
-
-data "aws_ami" "amazon-linux-2" {
-  most_recent = true
-  owners = ["amazon"]
-
-  filter {
-    name = "name"
-    values = [
-      "amzn2-ami-hvm-*-x86_64-gp2",
-    ]
-  }
-  filter {
-    name = "owner-alias"
-    values = [
-      "amazon",
-    ]
-  }
-}
-
 data "template_file" "init" {
   template = file(var.install_cpanel)
 }
@@ -27,12 +8,13 @@ resource "aws_key_pair" "tf-cpanel-aws" {
 }
 
 resource "aws_instance" "tf-cpanel" {
-  ami             = data.aws_ami.amazon-linux-2.id
-  instance_type   = (var.instance_type)
-  key_name        = aws_key_pair.tf-cpanel-aws.key_name
-  vpc_security_group_ids = [aws_security_group.sg_allow_tf_cpanel.id]
-  subnet_id          = aws_subnet.public-subnet-1.id
-  user_data = file(var.install_cpanel)
+  ami                         = var.ami
+  instance_type               = var.instance_type
+  private_ip                  = var.private_ip
+  key_name                    = aws_key_pair.tf-cpanel-aws.key_name
+  vpc_security_group_ids      = [aws_security_group.sg_allow_tf_cpanel.id]
+  subnet_id                   = aws_subnet.public-subnet-1.id
+  user_data                   = file(var.install_cpanel)
   associate_public_ip_address = true
   tags = {
     Name = "tf-cpanel"
@@ -65,14 +47,14 @@ resource "aws_security_group" "sg_allow_tf_cpanel" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-    ingress {
+  ingress {
     from_port   = 2083
     to_port     = 2083
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-    ingress {
+  ingress {
     from_port   = 2087
     to_port     = 2087
     protocol    = "tcp"
@@ -87,9 +69,9 @@ resource "aws_security_group" "sg_allow_tf_cpanel" {
   }
 
   egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
