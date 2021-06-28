@@ -1,6 +1,9 @@
 #!/bin/bash
 
 #cpanel
+sudo yum update -y
+sudo yum install wget -y
+sudo yum install perl -y
 cd /home 
 wget –N http://httpupdate.cpanel.net/latest
 chmod +x latest 
